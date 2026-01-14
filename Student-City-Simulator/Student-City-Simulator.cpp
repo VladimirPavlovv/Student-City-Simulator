@@ -5,7 +5,16 @@
 using namespace std;
 
 const int SESSION_DAYS = 45;
+const int EXAMS = 5;
 const int MAX = 100;
+
+int randomInt(int min, int max) {
+    int random = rand() % (max - min + 1) + min;
+
+    return random;
+}
+
+const int EXAM_DAYS[EXAMS] = { 8, 17, 26, randomInt(27, 44), 45 };
 
 struct Student
 {
@@ -25,21 +34,55 @@ struct Game {
     //add student stats for easier save!!!
 } game;
 
-void showStats() {
-    //fix ascii output!!!
-    cout << "======================= " << endl;
-    cout << "|| Day: " << game.day << endl;
-    cout << "|| Money: " << student.K << endl;
-    cout << "|| Energy: " << student.E << endl;
-    cout << "|| Mentality: " << student.P << endl;
-    cout << "|| Knowledge: " << student.Z << endl;
-    cout << "======================= " << endl;
+void printFrame(const string text[], int count) {
+    int width = 0;
+
+    for (int i = 0; i < count; i++)
+    {
+        if (text[i].length() > width) width = text[i].length();
+    }
+
+    cout << "╔" << string(width + 2, '=') << "╗\n";
+
+    for (int i = 0; i < count; i++)
+    {
+        cout << "║ " << text[i];
+        cout << string(width - text[i].length() + 1, ' ');
+        cout << "║\n";
+    }
+
+    cout << "╚" << string(width + 2, '=') << "╝\n";
 }
 
-int randomInt(int min, int max) {
-    int random = rand() % (max - min + 1) + min;
+void showStats() {
+    string stats[] = {
+        "Day: " + to_string(game.day) + " out of " + to_string(SESSION_DAYS),
+        "Money: " + to_string(student.K),
+        "Energy: " + to_string(student.E),
+        "Mentality: " + to_string(student.P),
+        "Knowledge: " + to_string(student.Z)
+    };
 
-    return random;
+    printFrame(stats, 5);
+}
+
+bool isExamDay() {
+    for (int i = 0; i < EXAMS; i++)
+    {
+        if (EXAM_DAYS[i] == game.day) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void win() {
+
+}
+
+void lose() {
+
 }
 
 void learn() {
@@ -52,7 +95,7 @@ void learn() {
     cin >> option;
 
     bool isDecided = false;
-
+    
     while (!isDecided) {
         switch (option) {
         case 1:
@@ -341,28 +384,32 @@ void attendExam(int examNumber) {
         }
     }
     else {
-        student.P -= 30;
-        student.E -= 20;
+        lose();
     }
 }
 
 void checkCondition() {
-
-}
-
-void exitGame() {
-
+    if (student.E <= 0) {
+        if (isExamDay()) {
+            student.E += 20;
+            student.P -= 20;
+        }
+        else {
+            game.day++;
+            student.E += 40;
+            student.P -= 10;
+        }
+    }
+    if (student.K <= 0) {
+        lose();
+    }
+    if (student.P <= 0) {
+        lose();
+    }
+    if (student.Z < 0) student.Z = 0;
 }
 
 void autoSave() {
-
-}
-
-void win() {
-
-}
-
-void lose() {
 
 }
 
@@ -436,6 +483,13 @@ void newGameLoop() {
             cout << "[11]Exit game" << endl;
             cin >> option;
 
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "Lets stick to entering a number.";
+                continue;
+            }
+
             switch (option) {
             case 1:
                 learn();
@@ -458,13 +512,17 @@ void newGameLoop() {
                 isDecided = true;
                 break;
             case 6:
-                attendExam(game.examNumber);
-                isDecided = true;
+                if (isExamDay()) {
+                    attendExam(game.examNumber);
+                    isDecided = true;
+                }
+                else {
+                    cout << "Not so fast, its not your time yet!" << endl;
+                }
                 break;
             case 11:
-                exitGame();
-                isDecided = true;
-                break;
+                autoSave();
+                return;
             default:
                 break;
             }
