@@ -26,7 +26,7 @@ struct Student
 } student;
 
 struct Game {
-    int difficulty = 1;
+    int difficulty = 0;
     int day = 1;
     int examDays[EXAMS] = { 8, 17, 26, randomInt(27, 45), 45 };
     int examNumber = 1;
@@ -41,7 +41,7 @@ void printFrame(const string text[], int count) {
         if (text[i].length() > width) width = text[i].length();
     }
 
-    cout << "╔" << string(width + 2, '=') << "╗\n";
+    cout << "\n╔" << string(width + 2, '=') << "╗\n";
 
     for (int i = 0; i < count; i++)
     {
@@ -116,10 +116,10 @@ void lose() {
 void learn() {
     int option;
 
-    cout << "How would you like to learn?" << endl;
+    cout << "\nHow would you like to learn?\n" << endl;
     cout << "[1]Go to lectures" << endl;
     cout << "[2]Learn at home" << endl;
-    cout << "[3]Learn with friends" << endl;
+    cout << "[3]Learn with friends\n" << endl;
     cin >> option;
 
     bool isDecided = false;
@@ -127,26 +127,22 @@ void learn() {
     while (!isDecided) {
         switch (option) {
         case 1:
+            cout << "\nYou went to lectures.\n";
+
             student.E -= 10;
             student.P -= 10;
 
             if (student.E >= 80) {
                 student.Z += 20;
-
-                if (student.Z > MAX) student.Z = MAX;
             }
             else if (student.E <= 40) {
                 int random = randomInt(1, 2);
 
                 if (random == 1) {
                     student.Z += 20;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
                 else {
                     student.Z += 10;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
             }
             else {
@@ -154,38 +150,30 @@ void learn() {
 
                 if (random != 1) {
                     student.Z += 20;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
                 else {
                     student.Z += 10;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
             }
             isDecided = true;
             break;
         case 2:
+            cout << "\nYou learned at home.\n";
+
             student.E -= 15;
             student.P -= 20;
 
             if (student.E >= 80) {
                 student.Z += 15;
-
-                if (student.Z > MAX) student.Z = MAX;
             }
             else if (student.E <= 40) {
                 int random = randomInt(1, 2);
 
                 if (random == 1) {
                     student.Z += 15;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
                 else {
                     student.Z += 8;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
             }
             else {
@@ -193,26 +181,21 @@ void learn() {
 
                 if (random != 1) {
                     student.Z += 15;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
                 else {
                     student.Z += 8;
-
-                    if (student.Z > MAX) student.Z = MAX;
                 }
             }
             isDecided = true;
             break;
         case 3:
+            cout << "\nYou studied with friends.\n";
+
             student.E -= 10;
 
             if (student.E >= 80) {
                 student.Z += 5;
                 student.P += 10;
-
-                if (student.Z > MAX) student.Z = MAX;
-                if (student.P > MAX) student.P = MAX;
             }
             else if (student.E <= 40) {
                 int random = randomInt(1, 2);
@@ -220,14 +203,9 @@ void learn() {
                 if (random == 1) {
                     student.Z += 5;
                     student.P += 10;
-
-                    if (student.Z > MAX) student.Z = MAX;
-                    if (student.P > MAX) student.P = MAX;
                 }
                 else {
                     student.P += 5;
-
-                    if (student.P > MAX) student.P = MAX;
                 }
             }
             else {
@@ -236,35 +214,34 @@ void learn() {
                 if (random != 1) {
                     student.Z += 5;
                     student.P += 10;
-
-                    if (student.Z > MAX) student.Z = MAX;
-                    if (student.P > MAX) student.P = MAX;
                 }
                 else {
                     student.P += 5;
-
-                    if (student.P > MAX) student.P = MAX;
                 }
             }
             isDecided = true;
             break;
         default:
-            cout << "Invalid option!" << endl;
+            cout << "\nInvalid option!\n" << endl;
             continue;
         }
     }
-    //add chance for random effect
+    
+    int random = randomInt(1, 100);
+    if (random <= 10) {
+        cout << "\nYou overlearned and started hearing voices!\n";
+        student.P -= 10;
+    }
 }
 
 void eat() {
+    cout << "\nYou went for the duner.\n";
+
     student.K -= 10;
 
     if (student.E >= 80) {
         student.E += 20;
         student.P += 5;
-
-        if (student.E > MAX) student.E = MAX;
-        if (student.P > MAX) student.P = MAX;
     }
     else if (student.E <= 40) {
         int random = randomInt(1, 2);
@@ -272,14 +249,9 @@ void eat() {
         if (random == 1) {
             student.E += 20;
             student.P += 5;
-
-            if (student.E > MAX) student.E = MAX;
-            if (student.P > MAX) student.P = MAX;
         }
         else {
             student.E += 10;
-
-            if (student.E > MAX) student.E = MAX;
         }
     }
     else {
@@ -288,51 +260,49 @@ void eat() {
         if (random != 1) {
             student.E += 20;
             student.P += 5;
-
-            if (student.E > MAX) student.E = MAX;
-            if (student.P > MAX) student.P = MAX;
         }
         else {
             student.E += 10;
-
-            if (student.E > MAX) student.E = MAX;
         }
     }
 
-    //add chance for random effect
+    int random = randomInt(1, 100);
+    if (random <= 15) {
+        cout << "\nYou got 1kg mayonaisse extra for lunch!\n";
+        student.E += 10;
+    }
 }
 
 void sleep() {
+    cout << "\nTime to take a nap.\n";
+
     student.E += 50;
     student.P += 10;
 
-    if (student.E > MAX) student.E = MAX;
-    if (student.P > MAX) student.P = MAX;
-
-    //add chance for random effect
+    int random = randomInt(1, 100);
+    if (random <= 20) {
+        cout << "\nYou overslept and missed a lecture!\n";
+        student.Z -= 10;
+    }
 }
 
 void goOut() {
+    cout << "\nLets go to chalgoteka.\n";
+
     student.E -= 15;
     student.K -= 25;
 
     if (student.E >= 80) {
         student.P += 40;
-
-        if (student.P > MAX) student.P = MAX;
     }
     else if (student.E <= 40) {
         int random = randomInt(1, 2);
 
         if (random == 1) {
             student.P += 40;
-
-            if (student.P > MAX) student.P = MAX;
         }
         else {
             student.P += 20;
-
-            if (student.P > MAX) student.P = MAX;
         }
     }
     else {
@@ -340,38 +310,37 @@ void goOut() {
 
         if (random != 1) {
             student.P += 40;
-
-            if (student.P > MAX) student.P = MAX;
         }
         else {
             student.P += 20;
-
-            if (student.P > MAX) student.P = MAX;
         }
+    }
+
+    int random = randomInt(1, 100);
+    if (random <= 10) {
+        cout << "\nHomeless man attacked and robbed you!\n";
+        student.P -= 10;
+        student.K -= 10;
     }
 }
 
 void work() {
+    cout << "\nNobody likes working, but we have to eat.\n";
+
     student.E -= 20;
     student.P -= 10;
 
     if (student.E >= 80) {
         student.K += 40;
-
-        if (student.K > MAX) student.K = MAX;
     }
     else if (student.E <= 40) {
         int random = randomInt(1, 2);
 
         if (random == 1) {
             student.K += 40;
-
-            if (student.K > MAX) student.K = MAX;
         }
         else {
             student.K += 20;
-
-            if (student.K > MAX) student.K = MAX;
         }
     }
     else {
@@ -379,20 +348,24 @@ void work() {
 
         if (random != 1) {
             student.K += 40;
-
-            if (student.K > MAX) student.K = MAX;
         }
         else {
             student.K += 20;
-
-            if (student.K > MAX) student.K = MAX;
         }
+    }
+
+    int random = randomInt(1, 100);
+    if (random <= 20) {
+        cout << "\nYou returned leva instead of euro and got fined by NAP!\n";
+        student.K -= 10;
     }
 }
 
-void attendExam(int examNumber) {
+void attendExam() {
+    cout << "\nGuess who has exam!\n";
+
     student.E -= 20;
-    int penalty = (examNumber - 1) * 5;
+    int penalty = (game.examNumber - 1) * 5;
     int luck = randomInt(1, 100);
 
     double success = (student.Z * 0.75) + (student.P * 0.1) + (student.E * 0.1) + (luck * 0.2) - penalty;
@@ -407,10 +380,22 @@ void attendExam(int examNumber) {
             student.P += 20;
             student.E -= 20;
 
-            if (student.P > MAX) student.P = MAX;
+            string pass[] = {
+                "Congratulations!",
+                "You passed exam number " + to_string(student.I)
+            };
+
+            printFrame(pass, 2);
         }
     }
     else {
+        string pass[] = {
+               "Sorry!",
+               "You failed exam number " + to_string(student.I)
+        };
+
+        printFrame(pass, 2);
+
         lose();
     }
 }
@@ -434,6 +419,12 @@ void checkCondition() {
         lose();
     }
     if (student.Z < MIN) student.Z = MIN;
+    if (student.E > MAX) student.E = MAX;
+    if (student.K > MAX) student.E = MAX;
+    if (student.P > MAX) student.E = MAX;
+    if (student.Z > MAX) student.E = MAX;
+
+
 }
 
 void autoSave() {
@@ -459,15 +450,13 @@ void autoSave() {
 }
 
 void setDifficulty() {
-    int difficulty;
-
-    cout << "Choose difficulty:" << endl;
+    cout << "\nChoose difficulty:\n" << endl;
     cout << "[1] Easy" << endl;
     cout << "[2] Medium" << endl;
-    cout << "[3] Hard" << endl;
-    cin >> difficulty;
+    cout << "[3] Hard\n" << endl;
+    cin >> game.difficulty;
 
-    switch (difficulty) {
+    switch (game.difficulty) {
     case 1:
         student.Z = 70;
         student.P = 100;
@@ -490,24 +479,58 @@ void setDifficulty() {
         student.I = 0;
         break;
     default:
-        cout << "Invalid input!";
+        cout << "\nInvalid input!\n";
         return;
+    }
+}
+
+void randomEvent() {
+    int random = randomInt(1, 100);
+
+    if (random <= 30) {
+        cout << "\nOh, a friend bought you a coffee!\n";
+        student.P += 10;
+    }
+    else if (random <= 55) {
+        cout << "\nMom and dad sent moneyyy$!\n";
+        student.K += 20;
+    }
+    else if (random <= 75) {
+        cout << "\nYou gambled your money playing belot with neighbors!\n";
+        student.K -= 10;
+        student.P -= 10;
+    }
+    else if (random <= 90) {
+        cout << "\nYou are feeling sick!\n";
+        student.E -= 20;
+    }
+    else {
+        cout << "\nThe dorm just burned down, you are a bit homeless!\n";
+        student.E -= 20;
+        student.P -= 20;
+        student.K -= 10;
     }
 }
 
 // Започване на нова игра
 void gameLoop() {
-    setDifficulty();
+    if (game.difficulty == 0) {
+        setDifficulty();
+    }
 
     while (game.day <= SESSION_DAYS) {
         showStats();
 
         int isDecided = false;
 
+        randomEvent();
+
+        checkCondition();
+
         while (!isDecided)
         {
             int option;
-            cout << "What do you feel like doing today?" << endl;
+            cout << "\nWhat do you feel like doing today?\n" << endl;
             cout << "[1]Learn" << endl;
             cout << "[2]Eat(Duner mostly) " << endl;
             cout << "[3]Go out(chalgoteka preferably)" << endl;
@@ -517,55 +540,56 @@ void gameLoop() {
             cout << "[.]" << endl;
             cout << "[.]" << endl;
             cout << "[.]" << endl;
-            cout << "[11]Exit game" << endl;
+            cout << "[11]Exit game\n" << endl;
             cin >> option;
 
             if (cin.fail()) {
                 cin.clear();
                 cin.ignore(1000, '\n');
-                cout << "Lets stick to entering a number.";
+                cout << "Lets stick to entering a number.\n";
                 continue;
             }
-
-            switch (option) {
-            case 1:
-                learn();
+   
+            if (isExamDay() && option == 6) {
+                attendExam();
                 isDecided = true;
-                break;
-            case 2:
-                eat();
-                isDecided = true;
-                break;
-            case 3:
-                goOut();
-                isDecided = true;
-                break;
-            case 4:
-                sleep();
-                isDecided = true;
-                break;
-            case 5:
-                work();
-                isDecided = true;
-                break;
-            case 6:
-                if (isExamDay()) {
-                    attendExam(game.examNumber);
+            }
+            else if (!isExamDay() && option == 6) {
+                cout << "\nNot so fast, its not your time yet!\n" << endl;
+            } 
+            else if (isExamDay() && option != 6) {
+                cout << "\nSorry, but you have an exam!\n" << endl;
+            }
+            else {
+                switch (option) {
+                case 1:
+                    learn();
                     isDecided = true;
+                    break;
+                case 2:
+                    eat();
+                    isDecided = true;
+                    break;
+                case 3:
+                    goOut();
+                    isDecided = true;
+                    break;
+                case 4:
+                    sleep();
+                    isDecided = true;
+                    break;
+                case 5:
+                    work();
+                    isDecided = true;
+                    break;
+                case 11:
+                    autoSave();
+                    return;
+                default:
+                    break;
                 }
-                else {
-                    cout << "Not so fast, its not your time yet!" << endl;
-                }
-                break;
-            case 11:
-                autoSave();
-                return;
-            default:
-                break;
             }
         }
-
-        checkCondition();
 
         if (!game.isRunning) {
             return;
@@ -580,34 +604,69 @@ void gameLoop() {
 
 // Зареждане на игра от файл
 void loadGame() {
+    ifstream file("save.txt");
 
+    if (!file) {
+        cout << "File not found!\n" << endl;
+        return;
+    }
+
+    // Student data
+    file >> student.Z;
+    file >> student.P;
+    file >> student.E;
+    file >> student.K;
+    file >> student.I;
+
+    // Game data
+    file >> game.difficulty;
+    file >> game.day;
+    for (int i = 0; i < EXAMS; i++)
+    {
+        file >> game.examDays[i];
+    }
+    file >> game.examNumber;
 
     gameLoop();
 }
 
 int main()
 {
-    srand(time(NULL));
+    srand(time(0));
 
     int option;
+    int isDecided = false;
 
-    cout << "Welcome to Student City!" << endl;
-    cout << "Choose your path:" << endl;
-    cout << "[1] Start new game" << endl;
-    cout << "[2] Load game from file\n" << endl;
-    cin >> option;
-    
-    switch (option) {
-    case 1:
-        gameLoop();
-        break;
-    case 2:
-        loadGame();
-        break;
-    default:
-        cout << "Maybe if you failed entering simple number you are not ready for student city :(\n";
-        break;
-    }
+    cout << "Welcome to Student City Simulator!\n" << endl;
+
+    do
+    {
+        cout << "Choose your path:\n" << endl;
+        cout << "[1] Start new game" << endl;
+        cout << "[2] Load game from file\n" << endl;
+        cin >> option;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Lets stick to entering a number.\n";
+            continue;
+        }
+
+        switch (option) {
+        case 1:
+            isDecided = true;
+            gameLoop();
+            break;
+        case 2:
+            isDecided = true;
+            loadGame();
+            break;
+        default:
+            cout << "Maybe if you failed entering simple number you are not ready for student city :(\n";
+            break;
+        }
+    } while (!isDecided);
 
     return 0;
 }
