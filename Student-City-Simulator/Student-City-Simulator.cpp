@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <fstream>
 #include <string>
 #include <ctime>
 
@@ -7,6 +8,7 @@ using namespace std;
 const int SESSION_DAYS = 45;
 const int EXAMS = 5;
 const int MAX = 100;
+const int MIN = 0;
 
 int randomInt(int min, int max) {
     int random = rand() % (max - min + 1) + min;
@@ -14,24 +16,21 @@ int randomInt(int min, int max) {
     return random;
 }
 
-const int EXAM_DAYS[EXAMS] = { 8, 17, 26, randomInt(27, 44), 45 };
-
 struct Student
 {
-    int Z; // Знание
-    int P; // Психика
-    int E; // Енергия
-    int K; // Пари(кеш) 
-    int I; // Изпити(взети)
+    int Z = 100; // Знание
+    int P = 100; // Психика
+    int E = 100; // Енергия
+    int K = 100; // Пари(кеш) 
+    int I = 0; // Изпити(взети)
 } student;
 
 struct Game {
-    int difficulty;
-    int day;
-    int examNumber;
-    int passedExams;
-    double success;
-    //add student stats for easier save!!!
+    int difficulty = 1;
+    int day = 1;
+    int examDays[EXAMS] = { 8, 17, 26, randomInt(27, 45), 45 };
+    int examNumber = 1;
+    bool isRunning = true;
 } game;
 
 void printFrame(const string text[], int count) {
@@ -69,7 +68,7 @@ void showStats() {
 bool isExamDay() {
     for (int i = 0; i < EXAMS; i++)
     {
-        if (EXAM_DAYS[i] == game.day) {
+        if (game.examDays[i] == game.day) {
             return true;
         }
     }
@@ -77,12 +76,41 @@ bool isExamDay() {
     return false;
 }
 
-void win() {
+void clearSave() {
+    ofstream file("save.txt");
+    file << "";
+    file.close();
+}
 
+void win() {
+    string win[] = {
+        "CONGRATULATIONS!!!",
+        "You succesfully survived the",
+        "exam session of your life!"
+    };
+
+    printFrame(win, 5);
+
+    clearSave();
+
+    game.isRunning = false;
 }
 
 void lose() {
+    string lose[] = {
+        "GAME OV3R!",
+        "Due to your mental health and lack of knowledge",
+        "you failed taking your exams,",
+        "dropped out of university,"
+        "became homeless and eventually died :-(.",
+        "Good luck next time!"
+    };
 
+    printFrame(lose, 5);
+
+    clearSave();
+
+    game.isRunning = false;
 }
 
 void learn() {
@@ -222,10 +250,9 @@ void learn() {
             break;
         default:
             cout << "Invalid option!" << endl;
-            break;
+            continue;
         }
     }
-
     //add chance for random effect
 }
 
@@ -389,7 +416,7 @@ void attendExam(int examNumber) {
 }
 
 void checkCondition() {
-    if (student.E <= 0) {
+    if (student.E <= MIN) {
         if (isExamDay()) {
             student.E += 20;
             student.P -= 20;
@@ -400,16 +427,34 @@ void checkCondition() {
             student.P -= 10;
         }
     }
-    if (student.K <= 0) {
+    if (student.K <= MIN) {
         lose();
     }
-    if (student.P <= 0) {
+    if (student.P <= MIN) {
         lose();
     }
-    if (student.Z < 0) student.Z = 0;
+    if (student.Z < MIN) student.Z = MIN;
 }
 
 void autoSave() {
+    ofstream file("save.txt");
+
+    // Student data
+    file << student.Z << '\n';
+    file << student.P << '\n';
+    file << student.E << '\n';
+    file << student.K << '\n';
+    file << student.I << '\n';
+
+    // Game data
+    file << game.difficulty << '\n';
+    file << game.day << '\n';
+    for (int i = 0; i < EXAMS; i++)
+    {
+        file << game.examDays[i] << ' ';
+    }
+    file << '\n';
+    file << game.examNumber;
 
 }
 
@@ -450,17 +495,9 @@ void setDifficulty() {
     }
 }
 
-// Зареждане на игра от файл
-void loadGameLoop() {
-
-}
-
 // Започване на нова игра
-void newGameLoop() {
+void gameLoop() {
     setDifficulty();
-
-    game.day = 1;
-    game.examNumber = 1;
 
     while (game.day <= SESSION_DAYS) {
         showStats();
@@ -530,11 +567,22 @@ void newGameLoop() {
 
         checkCondition();
 
+        if (!game.isRunning) {
+            return;
+        }
+
         game.day++;
 
         autoSave();
     }
 
+}
+
+// Зареждане на игра от файл
+void loadGame() {
+
+
+    gameLoop();
 }
 
 int main()
@@ -546,18 +594,18 @@ int main()
     cout << "Welcome to Student City!" << endl;
     cout << "Choose your path:" << endl;
     cout << "[1] Start new game" << endl;
-    cout << "[2] Load game from file" << endl;
+    cout << "[2] Load game from file\n" << endl;
     cin >> option;
     
     switch (option) {
     case 1:
-        newGameLoop();
+        gameLoop();
         break;
     case 2:
-        loadGameLoop();
+        loadGame();
         break;
     default:
-        cout << "Maybe if you failed entering simple number you are not ready for student city :(";
+        cout << "Maybe if you failed entering simple number you are not ready for student city :(\n";
         break;
     }
 
