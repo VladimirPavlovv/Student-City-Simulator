@@ -20,6 +20,8 @@ to rely not only on strategy but also on luck.
 - Automatic saving and loading of game progress
 - ASCII-based user interface
 
+<img width="434" height="470" alt="image" src="https://github.com/user-attachments/assets/89919e92-0c41-4704-91a3-7994022f3b78" />
+
 ## Gameplay Controls
 - The game is fully menu-driven.
 - Enter the number corresponding to your chosen action.
