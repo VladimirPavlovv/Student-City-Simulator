@@ -96,7 +96,7 @@ void printFrame(const char text[][MAX], int count)
     cout << "+";
     for (int i = 0; i < width + 2; i++)
     {
-        std::cout << "-";
+        cout << "-";
     }
     cout << "+" << endl;
 
@@ -795,6 +795,10 @@ void gameLoop() {
                 attendExam();
                 isDecided = true;
             }
+            else if (option == 11) {
+                autoSave();
+                return;
+            }
             else if (!isExamDay() && option == 6) {
                 cout << "\nNot so fast, its not your time yet!" << endl;
             } 
@@ -831,9 +835,6 @@ void gameLoop() {
                 }
             }
         }
-
-        // Second check condition to update the stats, so the random effect cause maximum changes 
-        checkCondition();
 
         // Second check if the game has ended
         if (!game.isRunning) {
