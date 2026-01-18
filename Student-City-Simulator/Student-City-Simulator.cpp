@@ -15,13 +15,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <ctime>
 
 using namespace std;
 
 const int SESSION_DAYS = 45;
 const int EXAMS = 5;
+const int PASS_SCORE = 75;
 const int MAX = 100;
 const int MIN = 0;
 
@@ -50,26 +50,82 @@ int randomInt(int min, int max) {
     return random;
 }
 
+void intToChar(int value, char buffer[], int& pos)
+{
+    char temp[10];
+    int count = 0;
+
+    if (value == 0)
+    {
+        buffer[pos++] = '0';
+        return;
+    }
+
+    while (value > 0)
+    {
+        temp[count++] = char(value % 10 + '0');
+        value /= 10;
+    }
+
+    for (int i = count - 1; i >= 0; i--)
+    {
+        buffer[pos++] = temp[i];
+    }
+}
+
+
 // Takes a string array and displays it inside an ASCII frame for better visualization
-void printFrame(const string text[], int count) {
+void printFrame(const char text[][MAX], int count)
+{
     int width = 0;
 
     for (int i = 0; i < count; i++)
     {
-        if (text[i].length() > width) width = text[i].length();
+        int len = 0;
+        while (text[i][len] != '\0')
+        {
+            len++;
+        }
+
+        if (len > width)
+        {
+            width = len;
+        }
     }
 
-    cout << "\n╔" << string(width + 2, '=') << "╗\n";
+    cout << "+";
+    for (int i = 0; i < width + 2; i++)
+    {
+        std::cout << "-";
+    }
+    cout << "+" << endl;
 
     for (int i = 0; i < count; i++)
     {
-        cout << "║ " << text[i];
-        cout << string(width - text[i].length() + 1, ' ');
-        cout << "║\n";
+        cout << "| " << text[i];
+
+        int len = 0;
+        while (text[i][len] != '\0')
+        {
+            len++;
+        }
+
+        for (int j = 0; j < width - len + 1; j++)
+        {
+            cout << " ";
+        }
+
+        cout << "|" << endl;
     }
 
-    cout << "╚" << string(width + 2, '=') << "╝\n";
+    cout << "+";
+    for (int i = 0; i < width + 2; i++)
+    {
+        cout << "-";
+    }
+    cout << "+" << endl;
 }
+
 
 // After finishing the game save.txt file becomes empty
 void clearSave() {
@@ -104,19 +160,81 @@ void autoSave() {
 
 // Showing student statistics for every day 
 void showStats() {
-    string stats[] = {
-        "Day: " + to_string(game.day) + " out of " + to_string(SESSION_DAYS),
-        "Money: " + to_string(student.K),
-        "Energy: " + to_string(student.E),
-        "Mentality: " + to_string(student.P),
-        "Knowledge: " + to_string(student.Z)
-    };
+    char stats[5][MAX];
+
+    // Day
+    int pos = 0;
+    const char dayText[] = "Day: ";
+
+    for (int i = 0; dayText[i] != '\0'; i++)
+    {
+        stats[0][pos++] = dayText[i];
+    }
+    intToChar(game.day, stats[0], pos);
+
+    const char outOf[] = " out of ";
+
+    for (int i = 0; outOf[i] != '\0'; i++)
+    {
+        stats[0][pos++] = outOf[i];
+    }
+    intToChar(SESSION_DAYS, stats[0], pos);
+
+    stats[0][pos] = '\0';
+
+    // Money
+    pos = 0;
+    const char moneyText[] = "Money: ";
+
+    for (int i = 0; moneyText[i] != '\0'; i++)
+    {
+        stats[1][pos++] = moneyText[i];
+    }
+    intToChar(student.K, stats[1], pos);
+
+    stats[1][pos] = '\0';
+
+    // Energy
+    pos = 0;
+    const char energyText[] = "Energy: ";
+
+    for (int i = 0; energyText[i] != '\0'; i++)
+    {
+        stats[2][pos++] = energyText[i];
+    }
+    intToChar(student.E, stats[2], pos);
+
+    stats[2][pos] = '\0';
+
+    // Mentality
+    pos = 0;
+    const char mentalityText[] = "Mentality: ";
+
+    for (int i = 0; mentalityText[i] != '\0'; i++)
+    {
+        stats[3][pos++] = mentalityText[i];
+    }
+    intToChar(student.P, stats[3], pos);
+
+    stats[3][pos] = '\0';
+
+    // Knowledge
+    pos = 0;
+    const char knowledgeText[] = "Knowledge: ";
+
+    for (int i = 0; knowledgeText[i] != '\0'; i++)
+    {
+        stats[4][pos++] = knowledgeText[i];
+    }
+    intToChar(student.Z, stats[4], pos);
+
+    stats[4][pos] = '\0';
 
     printFrame(stats, 5);
 }
 
 void win() {
-    string win[] = {
+    char win[][MAX] = {
         "CONGRATULATIONS!!!",
         "You successfully survived the",
         "exam session of your life!"
@@ -130,12 +248,12 @@ void win() {
 }
 
 void lose() {
-    string lose[] = {
+    char lose[][MAX] = {
         "GAME OV3R!",
         "Due to your mental health and lack of knowledge",
         "you failed taking your exams,",
         "dropped out of university,",
-        "became homeless and eventually died :-(.",
+        "became homeless and eventually died :-(",
         "Good luck next time!"
     };
 
@@ -162,14 +280,16 @@ bool isExamDay() {
 // Checking whether the player's statistics are within valid limits
 void checkCondition() {
     if (student.E <= MIN) {
-        cout << "\nDue to lack of energy, you went unconscious!\n";
-
         if (isExamDay()) {
+            cout << "\nDue to lack of energy, you went unconscious!\n";
+
             student.E += 30;
             student.P -= 20;
             student.Z -= 20;
         }
         else {
+            cout << "\nDue to lack of energy, you went unconscious and skipped a day!\n";
+
             game.day++;
             student.E += 40;
             student.P -= 10;
@@ -494,7 +614,7 @@ void attendExam() {
 
     double success = (student.Z * 0.75) + (student.P * 0.1) + (student.E * 0.1) + (luck * 0.2) - penalty;
 
-    if (success >= 75) {
+    if (success >= PASS_SCORE) {
         if (student.I == 4) {
             win();
         }
@@ -505,21 +625,61 @@ void attendExam() {
             student.E -= 20;
             student.Z -= 20;
 
-            string pass[] = {
-                "Congratulations!",
-                "You passed exam number " + to_string(student.I)
-            };
+            char pass[2][MAX];
+
+            int pos = 0;
+            const char msg1[] = "Congratulations!";
+
+            for (int i = 0; msg1[i] != '\0'; i++)
+            {
+                pass[0][pos++] = msg1[i];
+            }
+
+            pass[0][pos] = '\0';
+
+            // "You passed exam number X"
+            pos = 0;
+            const char msg2[] = "You passed exam number ";
+            for (int i = 0; msg2[i] != '\0'; i++)
+            {
+                pass[1][pos++] = msg2[i];
+            }
+
+            // Adding exam number
+            intToChar(student.I, pass[1], pos);
+            pass[1][pos] = '\0';
 
             printFrame(pass, 2);
         }
     }
     else {
-        string pass[] = {
-            "Sorry!",
-            "You failed exam number " + to_string(student.I)
-        };
+        char fail[2][MAX];
 
-        printFrame(pass, 2);
+        int pos = 0;
+        const char msg1[] = "Sorry!";
+
+        for (int i = 0; msg1[i] != '\0'; i++)
+        {
+            fail[0][pos++] = msg1[i];
+        }
+
+        fail[0][pos] = '\0';
+
+        // "You failed exam number X"
+        pos = 0;
+        const char msg2[] = "You failed exam number ";
+
+        for (int i = 0; msg2[i] != '\0'; i++)
+        {
+            fail[1][pos++] = msg2[i];
+        }
+
+        // Adding exam number
+        intToChar(student.I, fail[1], pos);
+        fail[1][pos] = '\0';
+
+        printFrame(fail, 2);
+
 
         lose();
     }
