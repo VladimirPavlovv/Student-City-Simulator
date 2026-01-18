@@ -675,7 +675,7 @@ void attendExam() {
         }
 
         // Adding exam number
-        intToChar(student.I, fail[1], pos);
+        intToChar(game.examNumber, fail[1], pos);
         fail[1][pos] = '\0';
 
         printFrame(fail, 2);
