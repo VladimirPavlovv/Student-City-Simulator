@@ -20,7 +20,7 @@ to rely not only on strategy but also on luck.
 - Automatic saving and loading of game progress
 - ASCII-based user interface
 
-<img width="434" height="470" alt="image" src="https://github.com/user-attachments/assets/89919e92-0c41-4704-91a3-7994022f3b78" />
+<img width="436" height="476" alt="image" src="https://github.com/user-attachments/assets/a291b669-822d-4d8d-8bc0-d20ef64f2e3f" />
 
 ## Gameplay Controls
 - The game is fully menu-driven.
@@ -46,7 +46,6 @@ to rely not only on strategy but also on luck.
 - Standard libraries used:
   - `<iostream>`
   - `<fstream>`
-  - `<string>`
   - `<ctime>`
 - Randomness is seeded using the system time.
 - The project uses structures to represent game state and player statistics.
