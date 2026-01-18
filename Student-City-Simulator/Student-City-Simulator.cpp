@@ -27,12 +27,6 @@ const int MIN = 0;
 
 //|================UTILITY + STRUCTURES=====================|
 
-int randomInt(int min, int max) {
-    int random = rand() % (max - min + 1) + min;
-
-    return random;
-}
-
 struct Student
 {
     int Z = 100; // Knowledge
@@ -45,10 +39,16 @@ struct Student
 struct Game {
     int difficulty = 0;
     int day = 1;
-    int examDays[EXAMS] = { 8, 17, 26, randomInt(27, 45), 45 };
+    int examDays[EXAMS];
     int examNumber = 1;
     bool isRunning = true; // Checking if the game has ended
 } game;
+
+int randomInt(int min, int max) {
+    int random = rand() % (max - min + 1) + min;
+
+    return random;
+}
 
 // Takes a string array and displays it inside an ASCII frame for better visualization
 void printFrame(const string text[], int count) {
@@ -162,9 +162,12 @@ bool isExamDay() {
 // Checking whether the player's statistics are within valid limits
 void checkCondition() {
     if (student.E <= MIN) {
+        cout << "\nDue to lack of energy, you went unconscious!\n";
+
         if (isExamDay()) {
-            student.E += 20;
+            student.E += 30;
             student.P -= 20;
+            student.Z -= 20;
         }
         else {
             game.day++;
@@ -173,9 +176,13 @@ void checkCondition() {
         }
     }
     if (student.K <= MIN) {
+        cout << "\nYou spent all of your money and starved to death!\n";
+
         lose();
     }
     if (student.P <= MIN) {
+        cout << "\nYou went insane and died!\n";
+
         lose();
     }
     if (student.Z < MIN) student.Z = MIN;
@@ -209,7 +216,7 @@ void randomEvent() {
     else {
         cout << "\nThe dorm just burned down, you are a bit homeless!\n";
         student.E -= 20;
-        student.P -= 20;
+        student.P -= 10;
         student.K -= 10;
     }
 }
@@ -240,7 +247,7 @@ void learn() {
             case 1:
                 cout << "\nYou went to lectures.\n";
 
-                student.E -= 10;
+                student.E -= 15;
                 student.P -= 10;
 
                 if (student.E >= 80) {
@@ -302,7 +309,7 @@ void learn() {
             case 3:
                 cout << "\nYou studied with friends.\n";
 
-                student.E -= 10;
+                student.E -= 15;
 
                 if (student.E >= 80) {
                     student.Z += 5;
@@ -342,14 +349,14 @@ void learn() {
     int random = randomInt(1, 100);
     if (random <= 10) {
         cout << "\nYou overlearned and started hearing voices!\n";
-        student.P -= 10;
+        student.P -= 20;
     }
 }
 
 void eat() {
     cout << "\nYou went for the duner.\n";
 
-    student.K -= 10;
+    student.K -= 15;
 
     if (student.E >= 80) {
         student.E += 20;
@@ -403,6 +410,7 @@ void goOut() {
     cout << "\nLet's go to chalgoteka.\n";
 
     student.E -= 15;
+    student.Z -= 10;
     student.K -= 25;
 
     if (student.E >= 80) {
@@ -433,8 +441,8 @@ void goOut() {
     int random = randomInt(1, 100);
     if (random <= 10) {
         cout << "\nHomeless man attacked and robbed you!\n";
-        student.P -= 10;
-        student.K -= 10;
+        student.P -= 15;
+        student.K -= 20;
     }
 }
 
@@ -442,7 +450,8 @@ void work() {
     cout << "\nNobody likes working, but we have to eat.\n";
 
     student.E -= 20;
-    student.P -= 10;
+    student.P -= 15;
+    student.Z -= 10;
 
     if (student.E >= 80) {
         student.K += 40;
@@ -494,6 +503,7 @@ void attendExam() {
             game.examNumber++;
             student.P += 20;
             student.E -= 20;
+            student.Z -= 20;
 
             string pass[] = {
                 "Congratulations!",
@@ -577,6 +587,13 @@ void gameLoop() {
     // Checking whether this is a new game or a loaded save
     if (game.difficulty == 0) {
         setDifficulty();
+
+        // Generating exam days
+        game.examDays[0] = 8;
+        game.examDays[1] = 17;
+        game.examDays[2] = 26;
+        game.examDays[3] = randomInt(27, 45);
+        game.examDays[4] = 45;
     }
 
     while (game.day <= SESSION_DAYS) {
@@ -657,6 +674,11 @@ void gameLoop() {
 
         // Second check condition to update the stats, so the random effect cause maximum changes 
         checkCondition();
+
+        // Second check if the game has ended
+        if (!game.isRunning) {
+            return;
+        }
 
         if (!isExamDay()) {
             randomEvent();
